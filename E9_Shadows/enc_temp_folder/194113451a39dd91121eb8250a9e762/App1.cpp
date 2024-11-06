@@ -101,7 +101,7 @@ void App1::updateVariables()
 	light->setDirection(lightDirSlider.x, lightDirSlider.y, lightDirSlider.z);
 	light->generateOrthoMatrix((float)sceneWidth, (float)sceneHeight, 0.1f, 100.f);
 
-	//light->generateProjectionMatrix(4.f, 100.f);
+	light->generateProjectionMatrix(4.f, 100.f);
 }
 
 void App1::depthPass()
@@ -112,7 +112,7 @@ void App1::depthPass()
 	// get the world, view, and projection matrices from the camera and d3d objects.
 	light->generateViewMatrix();
 	XMMATRIX lightViewMatrix = light->getViewMatrix();
-	XMMATRIX lightProjectionMatrix = light->getOrthoMatrix();
+	XMMATRIX lightProjectionMatrix = light->getProjectionMatrix();
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 
 	worldMatrix = XMMatrixTranslation(-50.f, 0.f, -10.f);
