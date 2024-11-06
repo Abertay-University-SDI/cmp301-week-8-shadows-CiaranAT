@@ -29,8 +29,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	// Variables for defining shadow map
 	int shadowmapWidth = 1024;
 	int shadowmapHeight = 1024;
-	int sceneWidth = 100;
-	int sceneHeight = 100;
+	sceneWidth = 100;
+	sceneHeight = 100;
 	float shadowResMult = 10;
 
 	// This is your shadow map
@@ -44,6 +44,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	lightDirSlider = light->getDirection();
 	light->setPosition(0.f, 0.f, -10.f);
 	lightPosSlider = light->getPosition();
+
 	light->generateOrthoMatrix((float)sceneWidth, (float)sceneHeight, 0.1f, 100.f);
 
 }
@@ -98,6 +99,7 @@ void App1::updateVariables()
 
 	light->setPosition(lightPosSlider.x, lightPosSlider.y, lightPosSlider.z);
 	light->setDirection(lightDirSlider.x, lightDirSlider.y, lightDirSlider.z);
+	light->generateOrthoMatrix((float)sceneWidth, (float)sceneHeight, 0.1f, 100.f);
 
 }
 

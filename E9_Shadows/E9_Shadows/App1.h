@@ -42,6 +42,9 @@ private:
 	XMFLOAT3 lightPosSlider;
 	XMFLOAT3 lightDirSlider;
 	float rotation;
+
+	int sceneWidth = 100;
+	int sceneHeight = 100;
 };
 
 #endif
