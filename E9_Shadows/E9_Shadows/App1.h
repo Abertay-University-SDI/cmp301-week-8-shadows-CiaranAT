@@ -20,6 +20,7 @@ public:
 
 protected:
 	bool render();
+	void updateVariables();
 	void depthPass();
 	void finalPass();
 	void gui();
@@ -27,6 +28,8 @@ protected:
 private:
 	TextureShader* textureShader;
 	PlaneMesh* mesh;
+	CubeMesh* cube;
+	SphereMesh* sphere;
 
 	Light* light;
 	AModel* model;
@@ -34,6 +37,9 @@ private:
 	DepthShader* depthShader;
 
 	ShadowMap* shadowMap;
+
+	XMFLOAT3 slider;
+	float rotation;
 };
 
 #endif
