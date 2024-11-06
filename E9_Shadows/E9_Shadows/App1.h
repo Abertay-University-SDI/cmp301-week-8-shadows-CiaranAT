@@ -30,6 +30,7 @@ private:
 	PlaneMesh* mesh;
 	CubeMesh* cube;
 	SphereMesh* sphere;
+	SphereMesh* lightSphere;
 
 	Light* light;
 	AModel* model;
@@ -38,7 +39,8 @@ private:
 
 	ShadowMap* shadowMap;
 
-	XMFLOAT3 slider;
+	XMFLOAT3 lightPosSlider;
+	XMFLOAT3 lightDirSlider;
 	float rotation;
 };
 
