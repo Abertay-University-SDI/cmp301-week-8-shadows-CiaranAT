@@ -5,12 +5,17 @@ Texture2D depthMapTexture : register(t1);
 SamplerState diffuseSampler  : register(s0);
 SamplerState shadowSampler : register(s1);
 
+struct Lights
+{
+    float4 ambient;
+    float4 diffuse;
+    float3 direction;
+    float padding;
+};
+
 cbuffer LightBuffer : register(b0)
 {
-	float4 ambient;
-	float4 diffuse;
-	float3 direction;
-    float padding;
+    Lights lights[2];
 };
 
 struct InputType
@@ -66,6 +71,9 @@ float2 getProjectiveCoords(float4 lightViewPosition)
 
 float4 main(InputType input) : SV_TARGET
 {
+    
+    Lights currentLight = lights[0];
+    
     float shadowMapBias = 0.005f;
     float4 colour = float4(0.f, 0.f, 0.f, 1.f);
     float4 textureColour = shaderTexture.Sample(diffuseSampler, input.tex);
@@ -80,10 +88,10 @@ float4 main(InputType input) : SV_TARGET
         if (!isInShadow(depthMapTexture, pTexCoord, input.lightViewPos, shadowMapBias))
         {
             // is NOT in shadow, therefore light
-            colour = calculateLighting(-direction, input.normal, diffuse);
+            colour = calculateLighting(-currentLight.direction, input.normal, currentLight.diffuse);
         }
     }
     
-    colour = saturate(colour + ambient);
+    colour = saturate(colour + currentLight.ambient);
     return saturate(colour) * textureColour;
 }

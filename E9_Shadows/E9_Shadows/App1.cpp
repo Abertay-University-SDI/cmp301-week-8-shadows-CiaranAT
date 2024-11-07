@@ -39,15 +39,27 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	shadowMap = new ShadowMap(renderer->getDevice(), shadowmapWidth * shadowResMult, shadowmapHeight * shadowResMult);
 
 	// Configure directional light
-	light = new Light();
-	light->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
-	light->setDiffuseColour(1.0f, 1.0f, 1.0f, 1.0f);
-	light->setDirection(0.0f, -0.7f, 0.7f);
-	lightDirSlider = light->getDirection();
-	light->setPosition(0.f, 0.f, -10.f);
-	lightPosSlider = light->getPosition();
+	// Initialise light
+	for (int i = 0; i < 2; i++)
+	{
+		lightArray[i] = new Light();
+	}
 
-	light->generateOrthoMatrix((float)sceneWidth, (float)sceneHeight, 0.1f, 100.f);
+	lightArray[0]->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
+	lightArray[0]->setDiffuseColour(1.0f, 0.0f, 0.0f, 1.0f);
+	lightArray[0]->setDirection(0.0f, -0.7f, 0.7f);
+	lightDirSlider = lightArray[0]->getDirection();
+	lightArray[0]->setPosition(0.f, 0.f, -10.f);
+	lightPosSlider = lightArray[0]->getPosition();
+
+	lightArray[0]->generateOrthoMatrix((float)sceneWidth, (float)sceneHeight, 0.1f, 100.f);
+
+	lightArray[1]->setAmbientColour(0.3f, 0.3f, 0.3f, 1.0f);
+	lightArray[1]->setDiffuseColour(0.0f, 0.0f, 1.0f, 1.0f);
+	lightArray[1]->setDirection(0.0f, -0.7f, -0.7f);
+	lightArray[1]->setPosition(0.f, 0.f, 40.f);
+
+	lightArray[1]->generateOrthoMatrix((float)sceneWidth, (float)sceneHeight, 0.1f, 100.f);
 }
 
 App1::~App1()
@@ -98,9 +110,9 @@ void App1::updateVariables()
 {
 	rotation += timer->getTime();
 
-	light->setPosition(lightPosSlider.x, lightPosSlider.y, lightPosSlider.z);
-	light->setDirection(lightDirSlider.x, lightDirSlider.y, lightDirSlider.z);
-	light->generateOrthoMatrix((float)sceneWidth, (float)sceneHeight, 0.1f, 100.f);
+	lightArray[0]->setPosition(lightPosSlider.x, lightPosSlider.y, lightPosSlider.z);
+	lightArray[0]->setDirection(lightDirSlider.x, lightDirSlider.y, lightDirSlider.z);
+	lightArray[0]->generateOrthoMatrix((float)sceneWidth, (float)sceneHeight, 0.1f, 100.f);
 
 	//light->generateProjectionMatrix(4.f, 100.f);
 }
@@ -111,9 +123,9 @@ void App1::depthPass()
 	shadowMap->BindDsvAndSetNullRenderTarget(renderer->getDeviceContext());
 
 	// get the world, view, and projection matrices from the camera and d3d objects.
-	light->generateViewMatrix();
-	XMMATRIX lightViewMatrix = light->getViewMatrix();
-	XMMATRIX lightProjectionMatrix = light->getOrthoMatrix();
+	lightArray[0]->generateViewMatrix();
+	XMMATRIX lightViewMatrix = lightArray[0]->getViewMatrix();
+	XMMATRIX lightProjectionMatrix = lightArray[0]->getOrthoMatrix();
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 
 	worldMatrix = XMMatrixTranslation(-50.f, 0.f, -10.f);
@@ -165,25 +177,25 @@ void App1::finalPass()
 	worldMatrix = XMMatrixTranslation(-50.f, 0.f, -10.f);
 	// Render floor
 	mesh->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), light);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), lightArray);
 	shadowShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 	worldMatrix = XMMatrixTranslation(-10.f, 5.f, 20.f);
 	// Render cube 
 	cube->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), light);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), lightArray);
 	shadowShader->render(renderer->getDeviceContext(), cube->getIndexCount());
 
 	worldMatrix = XMMatrixTranslation(10.f, 5.f, 20.f);
 	// Render sphere  
 	sphere->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), light);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), lightArray);
 	shadowShader->render(renderer->getDeviceContext(), sphere->getIndexCount());
 
 	worldMatrix = XMMatrixTranslation(lightPosSlider.x, lightPosSlider.y, lightPosSlider.z);
 	// Render sphere  
 	lightSphere->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), light);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), lightArray);
 	shadowShader->render(renderer->getDeviceContext(), lightSphere->getIndexCount());
 
 	// Render model
@@ -192,7 +204,7 @@ void App1::finalPass()
 	XMMATRIX scaleMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);
 	worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 	model->sendData(renderer->getDeviceContext());
-	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), light);
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMap->getDepthMapSRV(), lightArray);
 	shadowShader->render(renderer->getDeviceContext(), model->getIndexCount());
 
 	worldMatrix = renderer->getWorldMatrix();
@@ -214,8 +226,6 @@ void App1::finalPass()
 	gui();
 	renderer->endScene();
 }
-
-
 
 void App1::gui()
 {
@@ -240,7 +250,7 @@ void App1::gui()
 		ImGui::SliderFloat("Light Direction Z", &lightDirSlider.z, -1, 1);
 	}
 
-	ImGui::SliderFloat3("Light pos", (&lightPosSlider.x, &lightPosSlider.y, &lightPosSlider.z), -50, 50);
+	//ImGui::SliderFloat3("Light pos", (&lightPosSlider.x, &lightPosSlider.y, &lightPosSlider.z), -50, 50);
 
 
 	// Render UI

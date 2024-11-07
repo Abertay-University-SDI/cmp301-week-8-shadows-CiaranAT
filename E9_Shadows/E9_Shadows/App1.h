@@ -32,7 +32,7 @@ private:
 	SphereMesh* sphere;
 	SphereMesh* lightSphere;
 
-	Light* light;
+	Light* lightArray[2];
 	AModel* model;
 	ShadowShader* shadowShader;
 	DepthShader* depthShader;
