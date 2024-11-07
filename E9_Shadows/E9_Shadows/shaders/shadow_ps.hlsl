@@ -10,6 +10,7 @@ cbuffer LightBuffer : register(b0)
 	float4 ambient;
 	float4 diffuse;
 	float3 direction;
+    float padding;
 };
 
 struct InputType

@@ -48,7 +48,6 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	lightPosSlider = light->getPosition();
 
 	light->generateOrthoMatrix((float)sceneWidth, (float)sceneHeight, 0.1f, 100.f);
-
 }
 
 App1::~App1()
@@ -229,13 +228,20 @@ void App1::gui()
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Checkbox("Wireframe mode", &wireframeToggle);
 
-	ImGui::SliderFloat("Light 1 X", &lightPosSlider.x, -100, 100);
-	ImGui::SliderFloat("Light 1 Y", &lightPosSlider.y, 0, 50);
-	ImGui::SliderFloat("Light 1 Z", &lightPosSlider.z, -100, 100);
+	if (ImGui::CollapsingHeader("Light 1 Pos", ImGuiTreeNodeFlags_CollapsingHeader)) {
+		ImGui::SliderFloat("Light 1 X", &lightPosSlider.x, -100, 100);
+		ImGui::SliderFloat("Light 1 Y", &lightPosSlider.y, 0, 50);
+		ImGui::SliderFloat("Light 1 Z", &lightPosSlider.z, -100, 100);
+	}
 
-	ImGui::SliderFloat("Light Direction X", &lightDirSlider.x, -1, 1);
-	ImGui::SliderFloat("Light Direction Y", &lightDirSlider.y, -1, 1);
-	ImGui::SliderFloat("Light Direction Z", &lightDirSlider.z, -1, 1);
+	if (ImGui::CollapsingHeader("Light 1 Dir", ImGuiTreeNodeFlags_CollapsingHeader)) {
+		ImGui::SliderFloat("Light Direction X", &lightDirSlider.x, -1, 1);
+		ImGui::SliderFloat("Light Direction Y", &lightDirSlider.y, -1, 1);
+		ImGui::SliderFloat("Light Direction Z", &lightDirSlider.z, -1, 1);
+	}
+
+	ImGui::SliderFloat3("Light pos", (&lightPosSlider.x, &lightPosSlider.y, &lightPosSlider.z), -50, 50);
+
 
 	// Render UI
 	ImGui::Render();
