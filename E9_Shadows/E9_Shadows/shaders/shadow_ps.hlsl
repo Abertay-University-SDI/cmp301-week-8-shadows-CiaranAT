@@ -72,26 +72,34 @@ float2 getProjectiveCoords(float4 lightViewPosition)
 float4 main(InputType input) : SV_TARGET
 {
     
-    Lights currentLight = lights[0];
+   
     
     float shadowMapBias = 0.005f;
-    float4 colour = float4(0.f, 0.f, 0.f, 1.f);
+    float4 colour[2];
     float4 textureColour = shaderTexture.Sample(diffuseSampler, input.tex);
-
-	// Calculate the projected texture coordinates.
-    float2 pTexCoord = getProjectiveCoords(input.lightViewPos);
-	
-    // Shadow test. Is or isn't in shadow
-    if (hasDepthData(pTexCoord))
-    {
-        // Has depth map data
-        if (!isInShadow(depthMapTexture, pTexCoord, input.lightViewPos, shadowMapBias))
-        {
-            // is NOT in shadow, therefore light
-            colour = calculateLighting(-currentLight.direction, input.normal, currentLight.diffuse);
-        }
-    }
     
-    colour = saturate(colour + currentLight.ambient);
-    return saturate(colour) * textureColour;
+    for (int i = 0; i < 2; i++)
+    {
+        Lights currentLight = lights[i];
+        
+        colour[i] = float4(0.f, 0.f, 0.f, 1.f);
+        // Calculate the projected texture coordinates.
+        float2 pTexCoord = getProjectiveCoords(input.lightViewPos);
+        
+        // Shadow test. Is or isn't in shadow
+        if (hasDepthData(pTexCoord))
+        {
+        // Has depth map data
+            if (!isInShadow(depthMapTexture, pTexCoord, input.lightViewPos, shadowMapBias))
+            {
+            // is NOT in shadow, therefore light
+                colour[i] = calculateLighting(-currentLight.direction, input.normal, currentLight.diffuse);
+            }
+        }
+    
+        colour[i] = saturate(colour[i] + currentLight.ambient);
+    }
+
+	
+    return (saturate(colour[0]) + saturate(colour[1])) * textureColour;
 }
