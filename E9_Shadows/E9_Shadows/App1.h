@@ -39,6 +39,8 @@ private:
 
 	ShadowMap* shadowMap;
 
+	OrthoMesh* shadowMapMesh;
+
 	XMFLOAT3 lightPosSlider;
 	XMFLOAT3 lightDirSlider;
 	float rotation;
