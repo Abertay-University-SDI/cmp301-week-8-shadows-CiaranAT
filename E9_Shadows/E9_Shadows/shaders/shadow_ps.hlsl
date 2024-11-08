@@ -1,6 +1,6 @@
 
 Texture2D shaderTexture : register(t0);
-Texture2D depthMapTexture : register(t1);
+Texture2D depthMapTexture[2] : register(t1);
 
 SamplerState diffuseSampler  : register(s0);
 SamplerState shadowSampler : register(s1);
@@ -90,7 +90,7 @@ float4 main(InputType input) : SV_TARGET
         if (hasDepthData(pTexCoord))
         {
         // Has depth map data
-            if (!isInShadow(depthMapTexture, pTexCoord, input.lightViewPos, shadowMapBias))
+            if (!isInShadow(depthMapTexture[i], pTexCoord, input.lightViewPos, shadowMapBias))
             {
             // is NOT in shadow, therefore light
                 colour[i] = calculateLighting(-currentLight.direction, input.normal, currentLight.diffuse);

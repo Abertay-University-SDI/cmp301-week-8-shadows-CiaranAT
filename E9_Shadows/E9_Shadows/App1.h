@@ -37,9 +37,10 @@ private:
 	ShadowShader* shadowShader;
 	DepthShader* depthShader;
 
-	ShadowMap* shadowMap;
+	ShadowMap* shadowMap[2];
 
 	OrthoMesh* shadowMapMesh;
+	OrthoMesh* shadowMapMesh2;
 
 	XMFLOAT3 lightPosSlider;
 	XMFLOAT3 lightDirSlider;
