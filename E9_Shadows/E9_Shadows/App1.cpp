@@ -176,7 +176,7 @@ void App1::finalPass()
 	XMMATRIX viewMatrix = camera->getViewMatrix();
 	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
 
-	ID3D11ShaderResourceView* shadowMapPassTexture[2] = { shadowMap[0]->getDepthMapSRV(), shadowMap[0]->getDepthMapSRV() };
+	ID3D11ShaderResourceView* shadowMapPassTexture[2] = { shadowMap[0]->getDepthMapSRV(), shadowMap[1]->getDepthMapSRV() };
 
 	worldMatrix = XMMatrixTranslation(-50.f, 0.f, -10.f);
 	// Render floor
@@ -197,6 +197,12 @@ void App1::finalPass()
 	shadowShader->render(renderer->getDeviceContext(), sphere->getIndexCount());
 
 	worldMatrix = XMMatrixTranslation(lightPosSlider.x, lightPosSlider.y, lightPosSlider.z);
+	// Render sphere  
+	lightSphere->sendData(renderer->getDeviceContext());
+	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMapPassTexture, lightArray);
+	shadowShader->render(renderer->getDeviceContext(), lightSphere->getIndexCount());
+
+	worldMatrix = XMMatrixTranslation(0.f, 0.f, 40.f);
 	// Render sphere  
 	lightSphere->sendData(renderer->getDeviceContext());
 	shadowShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"brick"), shadowMapPassTexture, lightArray);

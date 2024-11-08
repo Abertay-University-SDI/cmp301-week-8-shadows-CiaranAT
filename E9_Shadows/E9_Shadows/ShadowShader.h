@@ -17,8 +17,8 @@ private:
 		XMMATRIX world;
 		XMMATRIX view;
 		XMMATRIX projection;
-		XMMATRIX lightView;
-		XMMATRIX lightProjection;
+		XMMATRIX lightView[2];
+		XMMATRIX lightProjection[2];
 	};
 
 	struct myLight
