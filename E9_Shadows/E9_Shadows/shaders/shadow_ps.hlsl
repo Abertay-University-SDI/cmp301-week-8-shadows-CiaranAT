@@ -3,7 +3,7 @@ Texture2D shaderTexture : register(t0);
 Texture2D depthMapTexture[2] : register(t1);
 
 SamplerState diffuseSampler  : register(s0);
-SamplerState shadowSampler : register(s1);
+//SamplerState shadowSampler : register(s1);
 
 struct Lights
 {
